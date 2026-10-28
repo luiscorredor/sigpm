@@ -73,7 +73,8 @@ function renderLogin() {
       const user = await signIn(String(data.get("email")), String(data.get("password")));
       sessionStorage.removeItem("sigpm_demo_mode");
       sessionStorage.setItem("sigpm_firebase_uid", user.uid);
-      await prepareCloudSync(user);\n      openApp(user);
+      await prepareCloudSync(user);
+      openApp(user);
     } catch (problem) {
       error.textContent = errorMessage(problem);
       error.hidden = false;
