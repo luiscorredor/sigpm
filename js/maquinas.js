@@ -1,4 +1,4 @@
-/* Módulo de máquinas: alta, edición, baja y registro de mantenimiento */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.maquinas = {
