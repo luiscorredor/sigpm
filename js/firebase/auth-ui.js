@@ -163,17 +163,24 @@ function escapeHtml(value) {
 
 async function start() {
   document.body.classList.remove("sigpm-authenticated");
+
+  // Mostrar el inicio de sesión de inmediato para evitar una pantalla gris
+  // si Firebase tarda en restaurar o comprobar la sesión.
+  renderLogin();
+
   try {
-    const user = await currentSession();
+    const user = await Promise.race([
+      currentSession(),
+      new Promise((resolve) => setTimeout(() => resolve(null), 5000))
+    ]);
     if (user && user.active !== false) {
       await prepareCloudSync(user);
       openApp(user);
-      return;
     }
   } catch (error) {
     console.error("No se pudo recuperar la sesión de Firebase:", error);
+    // El formulario de acceso permanece visible para permitir reintentar.
   }
-  renderLogin();
 }
 
 if (document.readyState === "loading") {
