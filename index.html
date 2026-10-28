@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIGPM — Gestión de Producción y Mantenimiento</title>
+  <meta name="theme-color" content="#1d2621">
+  <title>SIGPM — Gestión operativa</title>
   <style>body:not(.sigpm-authenticated) .app{display:none!important}</style>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/styles.css">
@@ -11,28 +12,43 @@
 <body>
   <div class="app">
     <nav class="sidebar">
-      <h1>S<span>I</span><span>P</span>M</h1>
-      <button class="nav-btn activo" data-vista="dashboard">Panel <span class="badge oculto" id="badge-alertas">0</span></button>
-      <button class="nav-btn" data-vista="maquinas">Máquinas</button>
-      <button class="nav-btn" data-vista="mantenimientos">Mantenimientos</button>
-      <button class="nav-btn" data-vista="productos">Productos</button>
-      <button class="nav-btn" data-vista="produccion">Producción</button>
-      <button class="nav-btn" data-vista="ajustes">Ajustes</button>
+      <a class="brand" href="#" data-vista="dashboard"><span class="brand-mark">S</span><span><b>SIGPM</b><small>Gestión operativa</small></span></a>
+      <p class="nav-caption">MENÚ PRINCIPAL</p>
+      <button class="nav-btn activo" data-vista="dashboard"><span><i>▦</i> Panel general</span></button>
+      <button class="nav-btn" data-vista="produccion"><span><i>▤</i> Producción</span></button>
+      <button class="nav-btn" data-vista="productos"><span><i>◇</i> Productos</span></button>
+      <button class="nav-btn" data-vista="materias"><span><i>▧</i> Materias primas</span></button>
+      <button class="nav-btn" data-vista="maquinas"><span><i>⚙</i> Máquinas</span></button>
+      <button class="nav-btn" data-vista="mantenimientos"><span><i>🔧</i> Mantenimiento</span></button>
+      <button class="nav-btn" data-vista="tecnicos"><span><i>♙</i> Técnicos</span></button>
+      <button class="nav-btn" data-vista="repuestos"><span><i>◉</i> Repuestos</span></button>
+      <button class="nav-btn" data-vista="ventas"><span><i>$</i> Ventas</span></button>
+      <button class="nav-btn" data-vista="reportes"><span><i>▥</i> Reportes</span></button>
+      <div class="sidebar-bottom"><span class="sidebar-dot"></span><span><b>Sistema operativo</b><small>SIGPM · Control integrado</small></span></div>
     </nav>
 
-    <main class="contenido">
-      <section class="vista activa" id="vista-dashboard"></section>
-      <section class="vista" id="vista-maquinas"></section>
-      <section class="vista" id="vista-mantenimientos"></section>
-      <section class="vista" id="vista-productos"></section>
-      <section class="vista" id="vista-produccion"></section>
-      <section class="vista" id="vista-ajustes"></section>
-    </main>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Espacio de trabajo</span><b>/</b><strong id="breadcrumb-current">Panel general</strong></div>
+        <div class="topbar-right"><span id="topbar-date"></span><div class="topbar-user"><span class="user-avatar">SD</span><span><b id="topbar-name">Usuario SIGPM</b><small id="topbar-role">Usuario</small></span></div></div>
+      </header>
+      <main class="contenido">
+        <section class="vista activa" id="vista-dashboard"></section>
+        <section class="vista" id="vista-maquinas"></section>
+        <section class="vista" id="vista-mantenimientos"></section>
+        <section class="vista" id="vista-productos"></section>
+        <section class="vista" id="vista-produccion"></section>
+        <section class="vista" id="vista-ajustes"></section>
+        <section class="vista" id="vista-materias"></section>
+        <section class="vista" id="vista-tecnicos"></section>
+        <section class="vista" id="vista-repuestos"></section>
+        <section class="vista" id="vista-ventas"></section>
+        <section class="vista" id="vista-reportes"></section>
+      </main>
+    </div>
   </div>
-
   <div class="modal-fondo" id="modal-fondo"><div class="modal" id="modal-caja"></div></div>
   <div id="toast"></div>
-
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/alertas.js"></script>
@@ -43,6 +59,7 @@
   <script src="js/productos.js"></script>
   <script src="js/produccion.js"></script>
   <script src="js/ajustes.js"></script>
+  <script src="js/extra-modules.js"></script>
   <script src="js/app.js"></script>
   <script type="module" src="js/firebase/auth-ui.js"></script>
 </body>
