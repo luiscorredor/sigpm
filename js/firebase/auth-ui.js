@@ -120,7 +120,7 @@ async function prepareCloudSync(user) {
       window.SIGPM.storage.guardar();
     }
   } catch (error) {
-    // La regla actual de Firestore puede bloquear la lectura hasta que se configure.
+  
     console.warn("No se pudieron cargar las máquinas de Firestore; se conservan los datos locales.", error);
   }
 }
@@ -164,8 +164,6 @@ function escapeHtml(value) {
 async function start() {
   document.body.classList.remove("sigpm-authenticated");
 
-  // Mostrar el inicio de sesión de inmediato para evitar una pantalla gris
-  // si Firebase tarda en restaurar o comprobar la sesión.
   renderLogin();
 
   try {
@@ -179,7 +177,7 @@ async function start() {
     }
   } catch (error) {
     console.error("No se pudo recuperar la sesión de Firebase:", error);
-    // El formulario de acceso permanece visible para permitir reintentar.
+   
   }
 }
 
