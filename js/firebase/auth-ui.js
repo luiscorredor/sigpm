@@ -1,4 +1,4 @@
-import { signIn, resetPassword, currentSession, logOut, loadMachinesFromCloud, saveMachineToCloud, deleteMachineFromCloud } from "./firebase-client.js";
+import { signIn, resetPassword, currentSession, logOut, syncAllCollections, saveRecordToCloud, deleteRecordFromCloud } from "./firebase-client.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -75,6 +75,7 @@ function renderLogin() {
       sessionStorage.setItem("sigpm_firebase_uid", user.uid);
       await prepareCloudSync(user);
       openApp(user);
+      window.SIGPM?.app?.refrescar();
     } catch (problem) {
       error.textContent = errorMessage(problem);
       error.hidden = false;
@@ -105,26 +106,13 @@ function renderLogin() {
 }
 
 async function prepareCloudSync(user) {
-  window.SIGPM = window.SIGPM || {};
-  window.SIGPM.cloudSync = {
-    saveMachine: (machine) => saveMachineToCloud(machine, user.uid),
-    deleteMachine: (id) => deleteMachineFromCloud(id)
-  };
-  try {
-    const cloudMachines = await loadMachinesFromCloud();
-    const local = window.SIGPM.storage?.lista("maquinas") || [];
-    const byId = new Map(local.map((machine) => [machine.id, machine]));
-    cloudMachines.forEach((machine) => byId.set(machine.id, machine));
-    if (window.SIGPM.storage) {
-      window.SIGPM.storage.datos.maquinas = [...byId.values()];
-      window.SIGPM.storage.guardar();
-    }
-  } catch (error) {
-  
-    console.warn("No se pudieron cargar las máquinas de Firestore; se conservan los datos locales.", error);
-  }
+  window.SIGPM=window.SIGPM||{};
+  const names=["maquinas","mantenimientos","productos","produccion","materias","tecnicos","repuestos","ventas"];
+  window.SIGPM.cloudSync={ready:false,collections:names,save:(name,record)=>saveRecordToCloud(name,record,user.uid),delete:(name,id)=>deleteRecordFromCloud(name,id)};
+  const cloud=await syncAllCollections(window.SIGPM.storage?.datos||{},user.uid);
+  if(window.SIGPM.storage){for(const name of names)window.SIGPM.storage.datos[name]=cloud[name]||[];window.SIGPM.storage.guardar();}
+  window.SIGPM.cloudSync.ready=true;
 }
-
 function openApp(user) {
   document.body.classList.add("sigpm-authenticated");
   const app = $(".app");
