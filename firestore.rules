@@ -43,7 +43,7 @@ service cloud.firestore {
       allow read, create, update, delete: if activeUser();
     }
 
-    // Todo lo que no esté autorizado explícitamente queda cerrado.
+  
     match /{document=**} {
       allow read, write: if false;
     }
