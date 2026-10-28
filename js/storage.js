@@ -1,4 +1,4 @@
-/* Persistencia local con sincronización opcional de máquinas en Firestore. */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.storage = {
