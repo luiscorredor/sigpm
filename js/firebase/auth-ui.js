@@ -165,6 +165,7 @@ async function start() {
   try {
     const user = await currentSession();
     if (user && user.active !== false) {
+      await prepareCloudSync(user);
       openApp(user);
       return;
     }
