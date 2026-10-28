@@ -61,7 +61,6 @@ export async function currentSession() {
   });
 }
 
-// Sincronización inicial de máquinas. Requiere reglas de Firestore que autoricen al usuario.
 export async function loadMachinesFromCloud() {
   const snapshot = await getDocs(collection(firestore, "maquinas"));
   return snapshot.docs.map((item) => ({ ...item.data(), id: item.id }));
