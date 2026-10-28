@@ -140,9 +140,12 @@ function openApp(user) {
 
   const safeName = escapeHtml(user.name || user.email || "Usuario");
   const safeRole = escapeHtml(user.role || "Usuario");
-  chip.innerHTML = `<div><b>${safeName}</b><small>${safeRole}</small></div><button id="sigpm-logout" type="button">Salir ↗</button>`;
+  chip.innerHTML = `<div><b>${safeName}</b><small>${safeRole}</small></div>`;
+  const topName = $("#topbar-name"); if (topName) topName.textContent = user.name || user.email || "Usuario SIGPM";
+  const topRole = $("#topbar-role"); if (topRole) topRole.textContent = user.role || "Usuario";
+  const avatar = $(".user-avatar"); if (avatar) avatar.textContent = String(user.name || user.email || "S").split(/[\\s@._-]+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 
-  $("#sigpm-logout")?.addEventListener("click", async () => {
+  const logout = async () => {
     try {
       await logOut();
     } finally {
@@ -150,7 +153,8 @@ function openApp(user) {
       sessionStorage.removeItem("sigpm_demo_mode");
       renderLogin();
     }
-  });
+  };
+  $("#topbar-logout")?.addEventListener("click", logout);
 
   $("#sigpm-auth-screen")?.remove();
 }
