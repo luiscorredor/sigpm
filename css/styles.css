@@ -336,3 +336,5 @@ body{background:var(--color-fondo);color:#202721;font-family:Inter,"Segoe UI",sy
 .recent-card{padding-bottom:0}.recent-card .tabla-wrap{margin:0 -20px;border:0;border-radius:0}.report-export-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
 @media(max-width:1050px){.dashboard-lower{grid-template-columns:1fr}.hero-banner{min-height:260px}}
 @media(max-width:800px){.dashboard-lower{grid-template-columns:1fr}.hero-page{right:18px;bottom:12px}.weekly-chart{gap:7px}.report-export-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.topbar-logout{border:1px solid #dfe5d8;background:#fbfcf8;color:#46543e;border-radius:10px;padding:10px 14px;font-size:11px;font-weight:750;cursor:pointer}.topbar-logout:hover{background:#f0f5e7}#sigpm-session-chip{display:none!important}
