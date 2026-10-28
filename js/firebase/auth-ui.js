@@ -7,7 +7,9 @@ const messages = {
   "auth/invalid-email": "El correo no tiene un formato válido.",
   "auth/too-many-requests": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
   "auth/network-request-failed": "No hay conexión. Revisa internet e inténtalo otra vez.",
-  "auth/operation-not-allowed": "El método Correo electrónico/Contraseña no está habilitado en Firebase Authentication."
+  "auth/operation-not-allowed": "El método Correo electrónico/Contraseña no está habilitado en Firebase Authentication.",
+  "permission-denied": "Firebase bloqueó el acceso a los datos. Hay que revisar las reglas de Firestore.",
+  "unavailable": "Firestore no está disponible en este momento. Revisa tu conexión e inténtalo de nuevo."
 };
 
 function errorMessage(error) {
@@ -166,6 +168,7 @@ async function start() {
     if (user && user.active !== false) {
       await prepareCloudSync(user);
       openApp(user);
+      window.SIGPM?.app?.refrescar();
     }
   } catch (error) {
     console.error("No se pudo recuperar la sesión de Firebase:", error);
