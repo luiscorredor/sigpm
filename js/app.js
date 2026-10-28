@@ -1,4 +1,4 @@
-/* Controlador principal: navegación y arranque */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.app = {
@@ -20,7 +20,6 @@ SIGPM.app = {
       b.onclick = () => this.ir(b.dataset.vista);
     });
 
-    // Cerrar modal al hacer clic fuera o con Escape
     document.getElementById("modal-fondo").addEventListener("mousedown", (e) => {
       if (e.target.id === "modal-fondo") SIGPM.ui.cerrarModal();
     });
@@ -30,7 +29,6 @@ SIGPM.app = {
 
     this.ir("dashboard");
 
-    // Recalcula alertas si la pestaña queda abierta de un día para otro
     setInterval(() => {
       if (document.getElementById("modal-fondo").classList.contains("abierto")) return;
       this.refrescar();
