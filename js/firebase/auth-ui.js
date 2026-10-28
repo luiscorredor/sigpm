@@ -1,4 +1,4 @@
-import { signIn, resetPassword, currentSession, logOut } from "./firebase-client.js";
+import { signIn, resetPassword, currentSession, logOut, loadMachinesFromCloud, saveMachineToCloud, deleteMachineFromCloud } from "./firebase-client.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -73,7 +73,7 @@ function renderLogin() {
       const user = await signIn(String(data.get("email")), String(data.get("password")));
       sessionStorage.removeItem("sigpm_demo_mode");
       sessionStorage.setItem("sigpm_firebase_uid", user.uid);
-      openApp(user);
+      await prepareCloudSync(user);\n      openApp(user);
     } catch (problem) {
       error.textContent = errorMessage(problem);
       error.hidden = false;
@@ -101,6 +101,27 @@ function renderLogin() {
       error.hidden = false;
     }
   });
+}
+
+async function prepareCloudSync(user) {
+  window.SIGPM = window.SIGPM || {};
+  window.SIGPM.cloudSync = {
+    saveMachine: (machine) => saveMachineToCloud(machine, user.uid),
+    deleteMachine: (id) => deleteMachineFromCloud(id)
+  };
+  try {
+    const cloudMachines = await loadMachinesFromCloud();
+    const local = window.SIGPM.storage?.lista("maquinas") || [];
+    const byId = new Map(local.map((machine) => [machine.id, machine]));
+    cloudMachines.forEach((machine) => byId.set(machine.id, machine));
+    if (window.SIGPM.storage) {
+      window.SIGPM.storage.datos.maquinas = [...byId.values()];
+      window.SIGPM.storage.guardar();
+    }
+  } catch (error) {
+    // La regla actual de Firestore puede bloquear la lectura hasta que se configure.
+    console.warn("No se pudieron cargar las máquinas de Firestore; se conservan los datos locales.", error);
+  }
 }
 
 function openApp(user) {
