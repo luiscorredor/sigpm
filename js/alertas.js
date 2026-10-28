@@ -1,8 +1,8 @@
-/* Lógica de negocio: cuándo vence un producto y cuándo toca mantenimiento */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.alertas = {
-  // ---------- Productos ----------
+
   estadoProducto(p) {
     const cfg = SIGPM.storage.datos.config;
     const dias = SIGPM.utils.diasHasta(p.fechaVencimiento);
@@ -12,7 +12,7 @@ SIGPM.alertas = {
     return { nivel: "ok", texto: "Vigente", dias };
   },
 
-  // ---------- Máquinas ----------
+
   proximoMantenimiento(m) {
     const base = m.ultimoMantenimiento || m.fechaIngreso;
     if (!base || !m.intervaloDias) return null;
@@ -32,7 +32,7 @@ SIGPM.alertas = {
     return { nivel: "ok", texto: "Al día", dias, proximo };
   },
 
-  // ---------- Resumen para el panel ----------
+
   resumen() {
     const { maquinas, productos } = SIGPM.storage.datos;
     const u = SIGPM.utils;
