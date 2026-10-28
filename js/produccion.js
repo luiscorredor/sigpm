@@ -1,4 +1,4 @@
-/* Módulo de producción: registro de lo producido por máquina y turno */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.produccion = {
