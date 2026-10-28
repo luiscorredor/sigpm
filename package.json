@@ -1,19 +1,7 @@
 {
   "name": "sigpm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Sistema Integrado de Gestión de Producción y Mantenimiento",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "db:migrate": "node scripts/migrate.js",
-    "check": "node --check server.js && node --check js/app.js"
-  },
-  "engines": { "node": ">=20" },
-  "dependencies": {
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "pg": "^8.13.1"
-  }
+  "description": "Sistema Integrado de Gestión de Producción y Mantenimiento con inicio de sesión Firebase",
+  "scripts": { "check": "node --check js/app.js" }
 }
