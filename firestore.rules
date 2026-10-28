@@ -18,21 +18,32 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Administrador";
     }
 
-    // Cada usuario puede consultar su propio perfil para iniciar sesión.
-    // Solo un administrador puede crear, modificar o borrar perfiles/roles.
+    // El empleado solo puede leer su propio perfil.
+    // La gestión de cuentas está reservada al administrador.
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow create, update, delete: if isAdmin();
     }
 
-    // Los usuarios activos pueden consultar, registrar y editar máquinas.
-    // Solo el administrador puede borrar registros de máquinas.
-    match /maquinas/{machineId} {
-      allow read, create, update: if activeUser();
-      allow delete: if isAdmin();
+    // Administrador y empleados activos pueden gestionar la operación.
+    // Solo el administrador puede gestionar cuentas en /users.
+    match /maquinas/{recordId} {
+      allow read, create, update, delete: if activeUser();
     }
 
-    // Cualquier otra colección queda cerrada hasta definir sus permisos.
+    match /mantenimientos/{recordId} {
+      allow read, create, update, delete: if activeUser();
+    }
+
+    match /productos/{recordId} {
+      allow read, create, update, delete: if activeUser();
+    }
+
+    match /produccion/{recordId} {
+      allow read, create, update, delete: if activeUser();
+    }
+
+    // Todo lo que no esté autorizado explícitamente queda cerrado.
     match /{document=**} {
       allow read, write: if false;
     }
