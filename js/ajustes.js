@@ -1,4 +1,4 @@
-/* Ajustes: días de aviso, respaldo y restauración de datos */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.ajustes = {
