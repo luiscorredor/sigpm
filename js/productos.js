@@ -1,4 +1,4 @@
-/* Módulo de productos / inventario con control de vencimientos */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.productos = {
