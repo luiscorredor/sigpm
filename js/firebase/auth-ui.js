@@ -130,7 +130,7 @@ function openApp(user) {
 
   window.SIGPM.currentUser = user;
   const userNav = $("#nav-usuarios");
-  if (userNav) userNav.hidden = user.role !== "admin";
+  if (userNav) { userNav.hidden = user.role !== "admin"; userNav.style.display = user.role === "admin" ? "" : "none"; }
   if (user.role !== "admin" && window.SIGPM.app?.vistaActual === "usuarios") window.SIGPM.app.ir("dashboard");
 
   const safeName = escapeHtml(user.name || user.email || "Usuario");
@@ -147,7 +147,7 @@ function openApp(user) {
       sessionStorage.removeItem("sigpm_firebase_uid");
       sessionStorage.removeItem("sigpm_demo_mode");
       window.SIGPM.currentUser = null;
-      const userNav = $("#nav-usuarios"); if (userNav) userNav.hidden = true;
+      const userNav = $("#nav-usuarios"); if (userNav) { userNav.hidden = true; userNav.style.display = "none"; }
       renderLogin();
     }
   };
