@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function activeUser() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.active == true;
+    }
+
+    function isAdmin() {
+      return activeUser()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Administrador";
+    }
+
+    // Cada usuario puede consultar su propio perfil para iniciar sesión.
+    // Solo un administrador puede crear, modificar o borrar perfiles/roles.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Los usuarios activos pueden consultar, registrar y editar máquinas.
+    // Solo el administrador puede borrar registros de máquinas.
+    match /maquinas/{machineId} {
+      allow read, create, update: if activeUser();
+      allow delete: if isAdmin();
+    }
+
+    // Cualquier otra colección queda cerrada hasta definir sus permisos.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
