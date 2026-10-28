@@ -1,8 +1,8 @@
-/* Utilidades generales: fechas, ids, escape de HTML */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.utils = {
-  // Fecha de hoy como "YYYY-MM-DD" (hora local)
+
   hoy() {
     return this.aISO(new Date());
   },
@@ -14,7 +14,6 @@ SIGPM.utils = {
     return `${y}-${m}-${d}`;
   },
 
-  // "YYYY-MM-DD" -> Date a medianoche local
   aFecha(iso) {
     if (!iso) return null;
     const [y, m, d] = iso.split("-").map(Number);
@@ -27,7 +26,6 @@ SIGPM.utils = {
     return this.aISO(f);
   },
 
-  // Días desde hoy hasta la fecha (negativo = ya pasó)
   diasHasta(iso) {
     if (!iso) return null;
     const hoy = this.aFecha(this.hoy());
@@ -57,7 +55,6 @@ SIGPM.utils = {
     });
   },
 
-  // Texto legible para "faltan X días"
   textoDias(dias) {
     if (dias === null || dias === undefined) return "—";
     if (dias === 0) return "Hoy";
