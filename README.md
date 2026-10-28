@@ -1,24 +1,20 @@
-# SIGPM — Sistema Integrado de Gestión de Producción y Mantenimiento
+# SIGPM — Gestión de Producción y Mantenimiento
 
-## Estructura del repositorio
-- `index.html`: interfaz principal.
-- `css/`: estilos y variables de color.
-- `js/`: utilidades, almacenamiento local, alertas, interfaz y módulos.
-- `server.js`: servidor Express y comprobación de conexión a PostgreSQL.
-- `database/schema.sql`: esquema inicial de la base de datos.
-- `scripts/migrate.js`: aplica el esquema a PostgreSQL.
-- `.env.example`: plantilla de configuración; copia a `.env` localmente y no publiques secretos.
+## Abrir en local
+Abre `index.html` con Live Server en Visual Studio Code. Firebase usa módulos JavaScript y no funciona al abrir con `file://`.
 
-## Preparar el proyecto localmente
-1. Instala Node.js 20 o superior.
-2. Descarga/clona el repositorio y ejecuta `npm install`.
-3. Copia `.env.example` a `.env` y reemplaza `DATABASE_URL` con la URL privada de tu base de datos PostgreSQL.
-4. Si el proveedor exige SSL, configura `PGSSL=true`.
-5. Ejecuta `npm run db:migrate` para crear las tablas.
-6. Ejecuta `npm start` y abre `http://localhost:3000`.
-7. Consulta `http://localhost:3000/api/health` para verificar la conexión.
+## Terminal Firebase
+- `firebase-setup.html`: configura el proyecto web y registra la primera cuenta.
+- `js/firebase/firebase-client.js`: Firebase Authentication y perfil Firestore.
+- `js/firebase/auth-ui.js`: inicio de sesión, recuperación de contraseña y cierre de sesión.
+- `firebase.rules.txt`: reglas iniciales de referencia.
 
-## Estado actual
-La estructura SQL y el servidor inicial están agregados. La interfaz actual todavía utiliza `localStorage`; no todos los módulos están conectados al API. El siguiente trabajo es implementar rutas CRUD seguras y conectar cada módulo a PostgreSQL. La tabla de usuarios no significa que el inicio de sesión esté implementado; antes de manejar datos reales se debe agregar autenticación y autorización en el servidor.
+## Configuración
+1. En Firebase Console registra una aplicación web y copia `apiKey`, `authDomain`, `projectId` y `appId`.
+2. Abre `firebase-setup.html` con Live Server y guarda los valores.
+3. En Build → Authentication → Sign-in method habilita Correo electrónico/Contraseña.
+4. Crea Cloud Firestore.
+5. Registra una cuenta en la terminal. Las cuentas nuevas empiezan con rol `employee`; asigna `admin` al documento `users/{uid}` desde Firestore para la cuenta administradora.
 
-No subas el archivo `.env`, contraseñas ni la URL de conexión de la base de datos a GitHub.
+## Estado y límites
+El inicio de sesión usa Firebase Authentication cuando se configura. El modo de demostración es local. **Los módulos de negocio todavía guardan datos en localStorage**; la integración de máquinas, mantenimientos, productos y producción con Firestore es una etapa posterior. No uses datos reales hasta completar esa integración y revisar las reglas por rol. No pegues claves privadas ni archivos de cuentas de servicio en la página.
