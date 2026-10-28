@@ -128,6 +128,11 @@ function openApp(user) {
     $(".sidebar")?.append(chip);
   }
 
+  window.SIGPM.currentUser = user;
+  const userNav = $("#nav-usuarios");
+  if (userNav) userNav.hidden = user.role !== "admin";
+  if (user.role !== "admin" && window.SIGPM.app?.vistaActual === "usuarios") window.SIGPM.app.ir("dashboard");
+
   const safeName = escapeHtml(user.name || user.email || "Usuario");
   const safeRole = escapeHtml(user.role || "Usuario");
   chip.innerHTML = `<div><b>${safeName}</b><small>${safeRole}</small></div>`;
@@ -141,6 +146,8 @@ function openApp(user) {
     } finally {
       sessionStorage.removeItem("sigpm_firebase_uid");
       sessionStorage.removeItem("sigpm_demo_mode");
+      window.SIGPM.currentUser = null;
+      const userNav = $("#nav-usuarios"); if (userNav) userNav.hidden = true;
       renderLogin();
     }
   };
