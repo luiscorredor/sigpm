@@ -1,11 +1,160 @@
-import {readConfig,signIn,resetPassword,currentSession,logOut} from "./firebase-client.js";
-const $=s=>document.querySelector(s);
-const errMsg=e=>({"auth/invalid-credential":"Correo o contraseña incorrectos.","auth/invalid-email":"El correo no tiene formato válido.","auth/too-many-requests":"Demasiados intentos. Espera un momento.","auth/network-request-failed":"Revisa tu conexión a internet.","auth/operation-not-allowed":"Activa Email/Contraseña en Firebase Authentication.","permission-denied":"Las reglas de Firestore no permiten leer el perfil."}[e.code]||e.message||"No se pudo iniciar sesión.");
-function login(){document.body.classList.remove("sigpm-authenticated");let x=$("#sigpm-auth-screen");if(!x){x=document.createElement("section");x.id="sigpm-auth-screen";document.body.append(x)}const c=readConfig(),ready=!!(c.projectId&&c.apiKey&&c.appId);x.innerHTML='<div class="sigpm-login-layout"><section class="sigpm-login-hero"><div class="sigpm-login-brand"><span>S</span><div><b>SIGPM</b><small>Gestión inteligente de operaciones</small></div></div><div class="sigpm-hero-copy"><p>PRODUCCIÓN · INVENTARIO · MANTENIMIENTO</p><h1>Todo tu negocio,<br><em>en un solo lugar.</em></h1><div class="sigpm-benefits"><div>✓ <span><b>Control operativo</b><small>Órdenes, máquinas y mantenimiento</small></span></div><div>✓ <span><b>Inventario y ventas</b><small>Productos, materiales y reportes</small></span></div><div>✓ <span><b>Acceso con Firebase</b><small>Inicio de sesión con correo y contraseña</small></span></div></div></div><small class="sigpm-hero-footer">SIGPM · Gestión de Producción y Mantenimiento</small></section><section class="sigpm-login-main"><div class="sigpm-login-card"><div class="sigpm-config-badge '+(ready?'is-ready':'')+'"><i></i>'+(ready?'Configuración Firebase guardada':'Firebase pendiente de configurar')+'</div><p class="sigpm-kicker">PORTAL DE ACCESO</p><h2>Bienvenido</h2><p class="sigpm-login-subtitle">Inicia sesión para abrir tu espacio de trabajo.</p><form id="sigpm-login-form"><label>Correo electrónico<input name="email" type="email" autocomplete="username" required placeholder="tu@empresa.com"></label><label>Contraseña<input name="password" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></label><p id="sigpm-login-error" hidden></p><button class="sigpm-login-submit" type="submit">Iniciar sesión <span>→</span></button><button id="sigpm-reset" class="sigpm-link-button" type="button">Olvidé mi contraseña</button></form><a class="sigpm-setup-link" href="firebase-setup.html"><span>⚙</span><div><b>Configurar Firebase</b><small>Conecta el proyecto y crea tu primera cuenta</small></div><strong>↗</strong></a><button id="sigpm-demo" class="sigpm-demo-button" type="button">Entrar en modo demostración local</button><p class="sigpm-login-note">La demostración usa datos locales. No la utilices para información real.</p></div><p class="sigpm-login-footer">Acceso SIGPM · Firebase Authentication</p></section></div>';
-$("#sigpm-login-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button[type="submit"]'),err=$("#sigpm-login-error");err.hidden=true;b.disabled=true;b.textContent="Verificando…";try{const d=new FormData(f),p=await signIn(String(d.get("email")),String(d.get("password")));sessionStorage.setItem("sigpm_firebase_uid",p.uid);sessionStorage.removeItem("sigpm_demo_mode");openApp(p)}catch(problem){err.textContent=errMsg(problem);err.hidden=false}finally{b.disabled=false;b.innerHTML='Iniciar sesión <span>→</span>'}};
-$("#sigpm-reset").onclick=async()=>{const email=$("#sigpm-login-form").elements.email.value.trim(),err=$("#sigpm-login-error");if(!email){err.textContent="Escribe primero tu correo.";err.hidden=false;return}try{await resetPassword(email);err.textContent="Si el correo está registrado, recibirás instrucciones.";err.hidden=false}catch(e){err.textContent=errMsg(e);err.hidden=false}};
-$("#sigpm-demo").onclick=()=>{sessionStorage.setItem("sigpm_demo_mode","1");openApp({name:"Modo demostración",email:"demo local",role:"demo"})}}
-function openApp(p){document.body.classList.add("sigpm-authenticated");const app=$(".app");if(app)app.style.display="";let chip=$("#sigpm-session-chip");if(!chip){chip=document.createElement("div");chip.id="sigpm-session-chip";chip.className="sigpm-session-chip";$(".sidebar")?.append(chip)}if(chip)chip.innerHTML='<div><b>'+esc(p.name||p.email||"Usuario")+'</b><small>'+esc(p.role||"employee")+'</small></div><button id="sigpm-logout" type="button">Salir ↗</button>';$("#sigpm-logout")?.addEventListener("click",async()=>{try{if(!sessionStorage.getItem("sigpm_demo_mode"))await logOut()}catch(e){console.warn(e)}sessionStorage.removeItem("sigpm_firebase_uid");sessionStorage.removeItem("sigpm_demo_mode");login()});$("#sigpm-auth-screen")?.remove()}
-function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-async function start(){document.body.classList.remove("sigpm-authenticated");if(readConfig().projectId){try{const p=await currentSession();if(p&&p.active!==false){openApp(p);return}}catch(e){console.warn("Firebase session:",e)}}login()}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
+import { signIn, resetPassword, currentSession, logOut } from "./firebase-client.js";
+
+const $ = (selector) => document.querySelector(selector);
+
+const messages = {
+  "auth/invalid-credential": "Correo o contraseña incorrectos.",
+  "auth/invalid-email": "El correo no tiene un formato válido.",
+  "auth/too-many-requests": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+  "auth/network-request-failed": "No hay conexión. Revisa internet e inténtalo otra vez.",
+  "auth/operation-not-allowed": "El método Correo electrónico/Contraseña no está habilitado en Firebase Authentication."
+};
+
+function errorMessage(error) {
+  return messages[error.code] || "No se pudo completar la operación. Revisa los datos e inténtalo de nuevo.";
+}
+
+function renderLogin() {
+  document.body.classList.remove("sigpm-authenticated");
+
+  let screen = $("#sigpm-auth-screen");
+  if (!screen) {
+    screen = document.createElement("section");
+    screen.id = "sigpm-auth-screen";
+    document.body.append(screen);
+  }
+
+  screen.innerHTML = `
+    <div class="sigpm-login-layout">
+      <section class="sigpm-login-hero">
+        <div class="sigpm-login-brand">
+          <span>S</span>
+          <div><b>SIGPM</b><small>Gestión inteligente de operaciones</small></div>
+        </div>
+        <div class="sigpm-hero-copy">
+          <p>PRODUCCIÓN · INVENTARIO · MANTENIMIENTO</p>
+          <h1>Todo tu negocio,<br><em>en un solo lugar.</em></h1>
+          <div class="sigpm-benefits">
+            <div>✓ <span><b>Control operativo</b><small>Órdenes, máquinas y mantenimiento</small></span></div>
+            <div>✓ <span><b>Inventario y ventas</b><small>Productos, materiales y reportes</small></span></div>
+            <div>✓ <span><b>Acceso seguro</b><small>Cuenta autorizada por SIGPM</small></span></div>
+          </div>
+        </div>
+        <small class="sigpm-hero-footer">SIGPM · Gestión de Producción y Mantenimiento</small>
+      </section>
+      <section class="sigpm-login-main">
+        <div class="sigpm-login-card">
+          <p class="sigpm-kicker">PORTAL PRIVADO</p>
+          <h2>Bienvenido</h2>
+          <p class="sigpm-login-subtitle">Ingresa con el correo y la contraseña que te asignó el administrador en Firebase.</p>
+          <form id="sigpm-login-form">
+            <label>Correo electrónico<input name="email" type="email" autocomplete="username" required placeholder="nombre@empresa.com"></label>
+            <label>Contraseña<input name="password" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></label>
+            <p id="sigpm-login-error" role="alert" hidden></p>
+            <button class="sigpm-login-submit" type="submit">Iniciar sesión <span>→</span></button>
+            <button id="sigpm-reset" class="sigpm-link-button" type="button">Olvidé mi contraseña</button>
+          </form>
+        </div>
+        <p class="sigpm-login-footer">Acceso privado · Firebase Authentication</p>
+      </section>
+    </div>`;
+
+  $("#sigpm-login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector('button[type="submit"]');
+    const error = $("#sigpm-login-error");
+    error.hidden = true;
+    button.disabled = true;
+    button.textContent = "Verificando…";
+
+    try {
+      const data = new FormData(form);
+      const user = await signIn(String(data.get("email")), String(data.get("password")));
+      sessionStorage.removeItem("sigpm_demo_mode");
+      sessionStorage.setItem("sigpm_firebase_uid", user.uid);
+      openApp(user);
+    } catch (problem) {
+      error.textContent = errorMessage(problem);
+      error.hidden = false;
+    } finally {
+      button.disabled = false;
+      button.innerHTML = 'Iniciar sesión <span>→</span>';
+    }
+  });
+
+  $("#sigpm-reset").addEventListener("click", async () => {
+    const email = $("#sigpm-login-form").elements.email.value.trim();
+    const error = $("#sigpm-login-error");
+    if (!email) {
+      error.textContent = "Escribe tu correo electrónico primero.";
+      error.hidden = false;
+      return;
+    }
+
+    try {
+      await resetPassword(email);
+      error.textContent = "Si el correo pertenece a una cuenta, recibirás instrucciones para restablecer la contraseña.";
+      error.hidden = false;
+    } catch (problem) {
+      error.textContent = errorMessage(problem);
+      error.hidden = false;
+    }
+  });
+}
+
+function openApp(user) {
+  document.body.classList.add("sigpm-authenticated");
+  const app = $(".app");
+  if (app) app.style.display = "";
+
+  let chip = $("#sigpm-session-chip");
+  if (!chip) {
+    chip = document.createElement("div");
+    chip.id = "sigpm-session-chip";
+    chip.className = "sigpm-session-chip";
+    $(".sidebar")?.append(chip);
+  }
+
+  const safeName = escapeHtml(user.name || user.email || "Usuario");
+  const safeRole = escapeHtml(user.role || "Usuario");
+  chip.innerHTML = `<div><b>${safeName}</b><small>${safeRole}</small></div><button id="sigpm-logout" type="button">Salir ↗</button>`;
+
+  $("#sigpm-logout")?.addEventListener("click", async () => {
+    try {
+      await logOut();
+    } finally {
+      sessionStorage.removeItem("sigpm_firebase_uid");
+      sessionStorage.removeItem("sigpm_demo_mode");
+      renderLogin();
+    }
+  });
+
+  $("#sigpm-auth-screen")?.remove();
+}
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[character]);
+}
+
+async function start() {
+  document.body.classList.remove("sigpm-authenticated");
+  try {
+    const user = await currentSession();
+    if (user && user.active !== false) {
+      openApp(user);
+      return;
+    }
+  } catch (error) {
+    console.error("No se pudo recuperar la sesión de Firebase:", error);
+  }
+  renderLogin();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", start, { once: true });
+} else {
+  start();
+}

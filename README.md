@@ -1,20 +1,24 @@
 # SIGPM — Gestión de Producción y Mantenimiento
 
-## Abrir en local
-Abre `index.html` con Live Server en Visual Studio Code. Firebase usa módulos JavaScript y no funciona al abrir con `file://`.
+## Inicio de sesión
 
-## Terminal Firebase
-- `firebase-setup.html`: configura el proyecto web y registra la primera cuenta.
-- `js/firebase/firebase-client.js`: Firebase Authentication y perfil Firestore.
+SIGPM usa Firebase Authentication con el método **Correo electrónico/Contraseña**. Las cuentas se crean y administran desde Firebase Console; la página pública no ofrece un formulario para configurar el proyecto ni para registrar usuarios.
+
+1. En Firebase Console, abre el proyecto `sigpm-53b9e`.
+2. En **Authentication → Users**, agrega las cuentas autorizadas con correo y contraseña.
+3. Abre SIGPM mediante un servidor web (por ejemplo, GitHub Pages o Live Server). Los módulos JavaScript de Firebase no funcionan abriendo el archivo con `file://`.
+4. Inicia sesión con una cuenta existente. No hay modo de demostración local.
+
+El enlace **Olvidé mi contraseña** envía el correo de restablecimiento mediante Firebase Authentication.
+
+## Servicios Firebase
+
+- `js/firebase/firebase-client.js`: configuración fija de la aplicación web SIGPM y funciones de Authentication.
 - `js/firebase/auth-ui.js`: inicio de sesión, recuperación de contraseña y cierre de sesión.
-- `firebase.rules.txt`: reglas iniciales de referencia.
+- Cloud Firestore está creado en el proyecto. El perfil de usuario se lee si existe; Authentication es quien valida las credenciales.
 
-## Configuración
-1. En Firebase Console registra una aplicación web y copia `apiKey`, `authDomain`, `projectId` y `appId`.
-2. Abre `firebase-setup.html` con Live Server y guarda los valores.
-3. En Build → Authentication → Sign-in method habilita Correo electrónico/Contraseña.
-4. Crea Cloud Firestore.
-5. Registra una cuenta en la terminal. Las cuentas nuevas empiezan con rol `employee`; asigna `admin` al documento `users/{uid}` desde Firestore para la cuenta administradora.
+La configuración de una aplicación web de Firebase se incluye en el cliente y no equivale a una contraseña de administrador. Nunca publiques claves privadas de cuentas de servicio.
 
-## Estado y límites
-El inicio de sesión usa Firebase Authentication cuando se configura. El modo de demostración es local. **Los módulos de negocio todavía guardan datos en localStorage**; la integración de máquinas, mantenimientos, productos y producción con Firestore es una etapa posterior. No uses datos reales hasta completar esa integración y revisar las reglas por rol. No pegues claves privadas ni archivos de cuentas de servicio en la página.
+## Estado de la integración
+
+La pantalla de configuración y el registro público de cuentas se han retirado de la interfaz. Las cuentas deben crearse en Firebase Console. **Los módulos de máquinas, mantenimientos, productos y producción todavía guardan sus datos de negocio en `localStorage`**; conectarlos a Firestore y definir reglas de acceso por rol es una etapa pendiente. No uses todavía esta versión para información de negocio sensible.
