@@ -1,4 +1,4 @@
-/* Historial de mantenimientos realizados */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.mantenimientos = {
