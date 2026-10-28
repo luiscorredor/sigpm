@@ -1,4 +1,4 @@
-/* Utilidades de interfaz: toast, modal y confirmaciones */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.ui = {
@@ -12,8 +12,6 @@ SIGPM.ui = {
     this._timer = setTimeout(() => t.classList.remove("visible"), 2800);
   },
 
-  // Abre un modal con título, HTML del formulario y callback al guardar.
-  // alGuardar(formElement) debe devolver false para mantener el modal abierto.
   modal({ titulo, html, textoGuardar = "Guardar", alGuardar }) {
     const fondo = document.getElementById("modal-fondo");
     const caja = document.getElementById("modal-caja");
