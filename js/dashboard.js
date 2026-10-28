@@ -1,4 +1,4 @@
-/* Panel principal: resumen y alertas */
+
 window.SIGPM = window.SIGPM || {};
 
 SIGPM.dashboard = {
