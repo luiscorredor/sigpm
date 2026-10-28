@@ -2,14 +2,14 @@ window.SIGPM = window.SIGPM || {};
 
 SIGPM.app = {
   vistaActual: "dashboard",
-  nombres: {dashboard:"Panel general",maquinas:"Máquinas",mantenimientos:"Mantenimiento",productos:"Productos",produccion:"Producción",ajustes:"Ajustes",materias:"Materias primas",tecnicos:"Técnicos",repuestos:"Repuestos",ventas:"Ventas",reportes:"Reportes"},
+  nombres: {dashboard:"Panel general",maquinas:"Máquinas",mantenimientos:"Mantenimiento",productos:"Productos",produccion:"Producción",ajustes:"Ajustes",materias:"Materias primas",tecnicos:"Técnicos",repuestos:"Repuestos",ventas:"Ventas",reportes:"Reportes",usuarios:"Usuarios"},
   vistas: {
     dashboard: () => SIGPM.dashboard, maquinas: () => SIGPM.maquinas,
     productos: () => SIGPM.productos, produccion: () => SIGPM.produccion,
     mantenimientos: () => SIGPM.mantenimientos, ajustes: () => SIGPM.ajustes,
     materias: () => SIGPM.extraModules, tecnicos: () => SIGPM.extraModules,
     repuestos: () => SIGPM.extraModules, ventas: () => SIGPM.extraModules,
-    reportes: () => SIGPM.extraModules
+    reportes: () => SIGPM.extraModules, usuarios: () => SIGPM.usuarios
   },
   iniciar() {
     SIGPM.storage.cargar();
